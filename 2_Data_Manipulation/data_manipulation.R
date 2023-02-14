@@ -4,8 +4,6 @@
 
 ##### Libraries #####
 library(tidyverse)
-library(lubridate)
-
 
 ##### Load Data #####
 citations <- read_csv(file = "1_Data/citation.csv")
@@ -95,9 +93,10 @@ reptiles_plotting_data <- reptiles_small %>%
            # remove coastal observations (only focus on inland ACT)
            decimalLongitude < 150 &
            # only keep the 6 most sighted families
-           family %in% over_100_obs_fams$family)
+           family %in% over_100_obs_fams$family) %>%
+  arrange(year)
 
 save(reptiles_plotting_data, citations_small, 
-     filename = "2_Data_Manipulation/plotting_data.RData")
+     file = "2_Data_Manipulation/plotting_data.RData")
 
   
