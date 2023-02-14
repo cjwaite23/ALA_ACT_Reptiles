@@ -13,7 +13,6 @@ library(scales)
 library(ggstream)
 library(ggtext)
 
-
 ##### Load Data #####
 load("2_Data_Manipulation/plotting_data.RData")
 
@@ -51,7 +50,9 @@ stream_plot1 <- reptiles_plotting_data %>%
         axis.text = element_text(colour = "gray10"),
         strip.background = element_blank(),
         strip.text = element_blank(),
-        panel.spacing.y = unit(c(0.2, 0.2, 0.2, 0.6, 0.6), "cm")) +
+        panel.spacing.y = unit(c(0.2, 0.2, 0.2, 0.6, 0.6), "cm"),
+        legend.position = c(0.7,0.9),
+        legend.title = element_text(face = "bold")) +
   # plot streams
   geom_stream(aes(x = year, y = no_of_obs, fill = factor(citation_type)),
               type = "ridge") +
