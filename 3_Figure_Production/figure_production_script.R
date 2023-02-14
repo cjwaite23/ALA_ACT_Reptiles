@@ -23,10 +23,23 @@ ACT_map <- st_read("1_Data/STE_2021_AUST_SHP_GDA2020") %>%
 ##### Begin making heatmap
 ggplot() +
   geom_sf(data = ACT_map, fill = "grey98", col = "grey30") +
-  stat_density_2d(data = reptiles_plotting_data,
+  stat_density_2d(data = reptiles_plotting_data %>%
+                    filter(year > 2020 & family %in% c("Elapidae", "Scincidae")),
                   geom = "raster",
-                  aes(x = decimalLongitude, y = decimalLatitude, fill = after_stat(density)),
+                  aes(x = decimalLongitude, y = decimalLatitude, 
+                      alpha = after_stat(density), fill = family),
              contour = FALSE) +
-  theme_classic()
-
+  facet_wrap(vars(family), nrow = 1) +
+  scale_alpha_continuous(name = "Reptile Observation Density",
+                         trans = "log10",
+                         range = c(0, 1),
+                         limits = c(0.95, 30),
+                         oob = squish) +
+  theme_classic() +
+  transition_time(year)
+  
+ggplot() +
+  geom_sf(data = ACT_map, fill = "grey98", col = "grey30") +
+  geom_point(data = reptiles_plotting_data %>% ,
+             aes())
 
