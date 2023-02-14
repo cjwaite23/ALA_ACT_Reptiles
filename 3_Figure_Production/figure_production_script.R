@@ -3,6 +3,10 @@
 # ALA reptile data in the ACT, Australia
 
 ##### Libraries #####
+library(extrafont)
+library(remotes)
+remotes::install_version("Rttf2pt1", version = "1.3.8")
+loadfonts(device = "win")
 library(tidyverse)
 library(gganimate)
 library(magick)
@@ -15,6 +19,7 @@ library(sf)
 library(ggstream)
 library(ggtext)
 
+
 ##### Load Data #####
 load("2_Data_Manipulation/plotting_data.RData")
 
@@ -24,35 +29,65 @@ levels <- levels(reptiles_plotting_data$family)
 labels <- tibble(
   year = 1963,
   no_of_obs = c(100, 100, 50, 30, 50, 50),
-  family = factor(levels, levels = levels))
+  family = factor(levels, levels = levels),
+  label = paste(levels, c("(Skinks)", "(Dragons)", "(Geckos)", "(Legless Lizards)", "(Elapid Snakes)", "(Freshwater Turtles)")))
+
+titles <- tibble(
+  year = c(1963, 1963),
+  no_of_obs = c(650, 550),
+  family = factor(c("Scincidae", "Scincidae"), levels = levels),
+  size = c("big", "small"),
+  label = c("**The Rise of Citizen Science: Reptiles**",
+            "A visualisation of the recorded sightings of reptile species from the six most observed Reptilia families in the ACT, Australia, since 1965. Sightings are grouped vertically into plots by family. The size of the coloured streams represent the amount of sightings of a family sourced from citizen science, government, and museum citations in a given year.")
+)
+
+# Set the font
+font = "Montserrat"
 
 ##### Plotting of Figure
 stream_plot1 <- reptiles_plotting_data %>%
   ggplot() +
+  theme_classic() +
+  # set theme parameters
+  theme(text = element_text(family = font, colour = "gray10"),
+        axis.line = element_line(colour = "gray10"),
+        axis.ticks = element_line(colour = "gray10"),
+        axis.text = element_text(colour = "gray10"),
+        strip.background = element_blank(),
+        strip.text = element_blank(),
+        panel.spacing.y = unit(c(0.2, 0.2, 0.2, 0.6, 0.6), "cm")) +
+  # plot streams
   geom_stream(aes(x = year, y = no_of_obs, fill = factor(citation_type)),
               type = "ridge") +
+  # facet the plot by family
   facet_grid(family ~ .,
              space = "free",
              scales = "free_y") +
+  # add family labels
   geom_text(data = labels,
-            aes(x = year, y = no_of_obs, label = family),
-            hjust = 0, vjust = 0) +
-  scale_x_continuous(breaks = seq(1965, 2020, by = 5)) +
+            aes(x = year, y = no_of_obs, label = label),
+            hjust = 0, vjust = 0, 
+            col = "gray20", family = font, fontface = "bold") +
+  geom_textbox(data = titles,
+               aes(x = year, y = no_of_obs, label = label, size = size),
+               hjust = 0, vjust = 1,
+               col = "gray10", family = font,
+               height = unit(2, "cm"),
+               width = unit(17, "cm"),
+               fill = "grey95",
+               box.colour = NA) +
+  scale_x_continuous(breaks = seq(1965, 2020, by = 5), limits = c(1963, 2023)) +
   scale_fill_manual(values = c("#80b1d3", "#fdb462", "#b3de69")) +
+  scale_size_manual(values = c("big" = 8, "small" = 3.5)) +
   xlab("Year") + ylab("Number of Observations") +
+  guides(size = "none") +
   labs(fill = "Citation Type",
-       title = "The Rise of Citizen Science",
-       subtitle = "A visualisation of the recorded sightings of reptile species from the six most observed species in the ACT, Australia, since 1965. Sightings are grouped by family and the size of the coloured streams represent the amount of sightings of that family sourced from that particular citation type. All observations are sourced from the Atlas of Living Australia (ALA, 2023).") +
-  theme_classic() +
-  theme(strip.background = element_blank(),
-        strip.text = element_blank(),
-        panel.spacing.y = unit(c(0.2, 0.2, 0.2, 0.6, 0.6), "cm"),
-        plot.title = element_text(face = "bold", size = 16),
-        plot.subtitle = element_textbox_simple(size = 10, 
-                                               lineheight = 1.2,
-                                               margin = margin(t = 0, b = 4)))
+       caption = "Visualisation: Callum Waite • Data: Atlas of Living Australia (2023)")
 
-
+ggsave(plot = stream_plot1,
+       filename = "4_Figures/stream_plot.pdf",
+       device = cairo_pdf,
+       width = 12, height = 8, units = "in")
 
 
 
