@@ -94,7 +94,13 @@ reptiles_plotting_data <- reptiles_small %>%
            decimalLongitude < 150 &
            # only keep the 6 most sighted families
            family %in% over_100_obs_fams$family) %>%
-  arrange(year)
+  arrange(year) %>%
+  mutate(family = factor(family,
+                         levels = c("Scincidae", "Agamidae", "Pygopodidae",
+                                    "Gekkonidae", "Elapidae", "Chelidae"))) %>%
+  group_by(year, family, dataResourceUid) %>%
+  summarise(no_of_obs = n(), .groups = "drop")
+
 
 save(reptiles_plotting_data, citations_small, 
      file = "2_Data_Manipulation/plotting_data.RData")
