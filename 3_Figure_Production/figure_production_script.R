@@ -84,7 +84,7 @@ stream_plot1 <- reptiles_plotting_data %>%
 
 ##### Save plot #####
 ggsave(plot = stream_plot1,
-       filename = "4_Figures/stream_plot.pdf",
+       filename = "4_Figures/ALA_reptile_plot.pdf",
        device = cairo_pdf,
        width = 12, height = 8, units = "in")
 
