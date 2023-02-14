@@ -22,7 +22,7 @@ levels <- levels(reptiles_plotting_data$family)
 #Set up label data frame
 labels <- tibble(
   year = 1963,
-  no_of_obs = c(100, 100, 50, 30, 50, 50),
+  no_of_obs = c(100, 50, 50, 30, 50, 50),
   family = factor(levels, levels = levels),
   label = paste(levels, c("(Skinks)", "(Dragons)", "(Geckos)", "(Legless Lizards)", "(Elapid Snakes)", "(Freshwater Turtles)")))
 
