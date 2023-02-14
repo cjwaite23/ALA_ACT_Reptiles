@@ -68,8 +68,36 @@ reptiles_small <- reptiles %>%
 ##### Produce a smaller subset of citations used in this data #####
 used_citations <- unique(reptiles$dataResourceUid)
 
+# Classify citations based on whether are a citizen science, government or museum database
+classifying_citations <- data.frame(
+  dataResourceUid = used_citations,
+  citation_type = factor(c("Citizen Science",
+                            "Government",
+                            "Citizen Science",
+                            "Citizen Science",
+                            "Citizen Science",
+                            "Citizen Science",
+                            "Government",
+                            "Museum",
+                            "Museum",
+                            "Museum",
+                            "Museum",
+                            "Museum",
+                            "Museum",
+                            "Museum",
+                            "Citizen Science",
+                            "Citizen Science",
+                            "Government",
+                            "Citizen Science",
+                            "Citizen Science",
+                            "Citizen Science",
+                            "Citizen Science",
+                            "Citizen Science"))
+)
+
 citations_small <- citations %>%
-  filter(UID %in% used_citations)
+  filter(UID %in% used_citations) %>%
+  left_join(classifying_citations, by = c("UID" = "dataResourceUid"))
 
 # Identify the families with > 100 observations in the dataset
 over_100_obs_fams <- reptiles_small %>%
@@ -90,15 +118,19 @@ reptiles_plotting_data <- reptiles_small %>%
            !is.na(year) &
            # remove observations before 1963 (too patchy before then)
            year >= 1963 &
-           # remove coastal observations (only focus on inland ACT)
-           decimalLongitude < 150 &
            # only keep the 6 most sighted families
            family %in% over_100_obs_fams$family) %>%
   arrange(year) %>%
+  # turn family into a factor
   mutate(family = factor(family,
-                         levels = c("Scincidae", "Agamidae", "Pygopodidae",
-                                    "Gekkonidae", "Elapidae", "Chelidae"))) %>%
-  group_by(year, family, dataResourceUid) %>%
+                         levels = c("Scincidae", "Agamidae", "Gekkonidae",
+                                    "Pygopodidae", "Elapidae", "Chelidae"))) %>%
+  # append citation types
+  left_join(citations_small %>% 
+              dplyr::select(UID, citation_type),
+            by = c("dataResourceUid" = "UID")) %>%
+  # summarise citation types by year
+  group_by(year, family, citation_type) %>%
   summarise(no_of_obs = n(), .groups = "drop")
 
 
