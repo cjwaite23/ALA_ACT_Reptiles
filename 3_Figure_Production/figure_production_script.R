@@ -13,6 +13,7 @@ library(ggspatial)
 library(RColorBrewer)
 library(sf)
 library(ggstream)
+library(ggtext)
 
 ##### Load Data #####
 load("2_Data_Manipulation/plotting_data.RData")
@@ -45,7 +46,11 @@ stream_plot1 <- reptiles_plotting_data %>%
   theme_classic() +
   theme(strip.background = element_blank(),
         strip.text = element_blank(),
-        panel.spacing.y = unit(c(0.2, 0.2, 0.2, 0.6, 0.6), "cm"))
+        panel.spacing.y = unit(c(0.2, 0.2, 0.2, 0.6, 0.6), "cm"),
+        plot.title = element_text(face = "bold", size = 16),
+        plot.subtitle = element_textbox_simple(size = 10, 
+                                               lineheight = 1.2,
+                                               margin = margin(t = 0, b = 4)))
 
 
 
