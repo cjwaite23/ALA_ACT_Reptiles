@@ -9,7 +9,7 @@ library(tidyverse)
 citations <- read_csv(file = "1_Data/citation.csv")
 
 reptiles <- read_csv(file = "1_Data/records-2023-02-14.csv") %>%
-  # keep the columns of potential biological/analytical interest
+  # keep the columns of potential biological/analytical interest for initial observation and exploration
   dplyr::select(dataResourceUid,
                 institutionCode,
                 collectionCode,
@@ -110,7 +110,6 @@ over_100_obs_fams <- reptiles_small %>%
   filter(total_obs > 100)
 
 ##### Filtering the data to be useful for my purposes #####
-
 reptiles_plotting_data <- reptiles_small %>%
   # Keep observations ID'd to family level
   filter(!is.na(family) &
@@ -133,7 +132,7 @@ reptiles_plotting_data <- reptiles_small %>%
   group_by(year, family, citation_type) %>%
   summarise(no_of_obs = n(), .groups = "drop")
 
-
+# save data file
 save(reptiles_plotting_data, citations_small, 
      file = "2_Data_Manipulation/plotting_data.RData")
 
