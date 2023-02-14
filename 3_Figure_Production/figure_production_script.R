@@ -40,6 +40,10 @@ ggplot() +
   
 ggplot() +
   geom_sf(data = ACT_map, fill = "grey98", col = "grey30") +
-  geom_point(data = reptiles_plotting_data %>% ,
-             aes())
+  geom_point(data = reptiles_plotting_data,
+             aes(x = decimalLongitude, y = decimalLatitude, colour = family)) +
+  facet_wrap(vars(family), nrow = 1) +
+  theme_classic() +
+  transition_components(year, exit_length = 2) +
+  
 
