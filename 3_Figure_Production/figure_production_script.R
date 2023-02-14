@@ -3,19 +3,13 @@
 # ALA reptile data in the ACT, Australia
 
 ##### Libraries #####
+#install.packages("extrafont", "remotes", "tidyverse", "scales", "ggstream", "ggtext")
 library(extrafont)
 library(remotes)
 remotes::install_version("Rttf2pt1", version = "1.3.8")
 loadfonts(device = "win")
 library(tidyverse)
-library(gganimate)
-library(magick)
-library(patchwork)
-library(ozmaps)
 library(scales)
-library(ggspatial)
-library(RColorBrewer)
-library(sf)
 library(ggstream)
 library(ggtext)
 
@@ -23,7 +17,8 @@ library(ggtext)
 ##### Load Data #####
 load("2_Data_Manipulation/plotting_data.RData")
 
-##### We shall try looking at how the sources of sightings are changing #####
+##### We shall try looking at how the sources of sightings are changing
+##### Predefine some data #####
 levels <- levels(reptiles_plotting_data$family)
 #Set up label data frame
 labels <- tibble(
@@ -32,6 +27,7 @@ labels <- tibble(
   family = factor(levels, levels = levels),
   label = paste(levels, c("(Skinks)", "(Dragons)", "(Geckos)", "(Legless Lizards)", "(Elapid Snakes)", "(Freshwater Turtles)")))
 
+# set up df for titles
 titles <- tibble(
   year = c(1963, 1963),
   no_of_obs = c(650, 550),
@@ -44,7 +40,7 @@ titles <- tibble(
 # Set the font
 font = "Montserrat"
 
-##### Plotting of Figure
+##### Plotting of Figure #####
 stream_plot1 <- reptiles_plotting_data %>%
   ggplot() +
   theme_classic() +
@@ -68,6 +64,7 @@ stream_plot1 <- reptiles_plotting_data %>%
             aes(x = year, y = no_of_obs, label = label),
             hjust = 0, vjust = 0, 
             col = "gray20", family = font, fontface = "bold") +
+  # add title and subtitle
   geom_textbox(data = titles,
                aes(x = year, y = no_of_obs, label = label, size = size),
                hjust = 0, vjust = 1,
@@ -84,6 +81,7 @@ stream_plot1 <- reptiles_plotting_data %>%
   labs(fill = "Citation Type",
        caption = "Visualisation: Callum Waite • Data: Atlas of Living Australia (2023)")
 
+##### Save plot #####
 ggsave(plot = stream_plot1,
        filename = "4_Figures/stream_plot.pdf",
        device = cairo_pdf,
